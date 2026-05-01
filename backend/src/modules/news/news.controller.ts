@@ -8,3 +8,13 @@ export async function getAll(_req: Request, res: Response): Promise<void> {
   res.json(news);
 }
 
+export async function getById(req: Request, res: Response): Promise<void> {
+  const news = await getNewsById(String(req.params.id));
+
+  if (!news) {
+    res.status(404).json({ error: 'Noticia no encontrada' });
+    return;
+  }
+
+  res.json(news);
+}
