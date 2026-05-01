@@ -29,3 +29,23 @@ export async function getNewsById(id: string): Promise<News | null> {
   return news.find((n) => n.id === id) || null;
 }
 
+export async function createNews(
+  title: string,
+  content: string | undefined,
+  author: string,
+  imageUrl?: string,
+): Promise<News> {
+  const news = await getAllNews();
+  const newNews: News = {
+    id: uuidv4(),
+    title,
+    content,
+    author,
+    ...(imageUrl && { imageUrl }),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  news.push(newNews);
+  await fs.writeFile(NEWS_FILE, JSON.stringify(news, null, 2));
+  return newNews;
+}
