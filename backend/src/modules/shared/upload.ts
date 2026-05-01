@@ -14,3 +14,16 @@ const storage = multer.diskStorage({ // indicamos donde guardaremos los archivos
     cb(null, `news-${uniqueSuffix}${ext}`);
   },
 });
+
+const fileFilter = (
+  _req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback,
+) => {
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten imágenes (JPEG, PNG, GIF, WebP)'));
+  }
+};
