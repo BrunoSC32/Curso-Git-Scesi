@@ -18,3 +18,21 @@ export async function getById(req: Request, res: Response): Promise<void> {
 
   res.json(news);
 }
+
+export async function create(req: Request, res: Response): Promise<void> {
+ try{
+  const { title, content, author, imageUrl } = req.body;
+
+  if (!title || !author) {
+    res.status(400).json({ error: 'El título y el autor son requeridos' });
+    return;
+  }
+  
+    const newNews = await createNews(title, content, author, imageUrl);
+    res.status(201).json(newNews);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al crear la noticia' });
+  }
+}
+
+
