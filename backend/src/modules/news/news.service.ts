@@ -78,3 +78,14 @@ export async function updateNews(
   await fs.writeFile(NEWS_FILE, JSON.stringify(news, null, 2));
   return news[index];
 }
+
+export async function deleteNews(id: string): Promise<News | null> {
+  const news = await getAllNews();
+  const newsItem = news.find((n) => n.id === id);
+
+  if (!newsItem) return null;
+
+  const filteredNews = news.filter((n) => n.id !== id);
+  await fs.writeFile(NEWS_FILE, JSON.stringify(filteredNews, null, 2));
+  return newsItem;
+}
