@@ -28,8 +28,10 @@ export async function create(req: Request, res: Response): Promise<void> {
     return;
   }
   
-    const newNews = await createNews(title, content, author, imageUrl);
-    res.status(201).json(newNews);
+  const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : imageUrl;
+  
+  const newNews = await createNews(title, content, author, finalImageUrl);
+  res.status(201).json(newNews);
   } catch (error) {
     res.status(500).json({ error: 'Error al crear la noticia' });
   }
@@ -45,7 +47,10 @@ export async function update(req: Request, res: Response): Promise<void> {
   }
 
   try {
-    const updatedNews = await updateNews(String(id), title, content, imageUrl);
+    // Si se cargó un archivo, usar la ruta del archivo. Si no, usar imageUrl del body
+    const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : imageUrl;
+    
+    const updatedNews = await updateNews(String(id), title, content, finalImageUrl);
 
     if (!updatedNews) {
       res.status(404).json({ error: 'Noticia no encontrada' });
