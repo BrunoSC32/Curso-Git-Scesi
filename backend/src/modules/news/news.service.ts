@@ -49,3 +49,32 @@ export async function createNews(
   await fs.writeFile(NEWS_FILE, JSON.stringify(news, null, 2));
   return newNews;
 }
+
+export async function updateNews(
+  id: string,
+  title: string,
+  content: string | undefined,
+  imageUrl?: string | null,
+): Promise<News | null> {
+  const news = await getAllNews();
+  const index = news.findIndex((n) => n.id === id);
+
+  if (index === -1) return null;
+
+  const updated: News = {
+    ...news[index],
+    title,
+    content,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (imageUrl === null) {
+    delete updated.imageUrl;
+  } else if (imageUrl !== undefined) {
+    updated.imageUrl = imageUrl;
+  }
+
+  news[index] = updated;
+  await fs.writeFile(NEWS_FILE, JSON.stringify(news, null, 2));
+  return news[index];
+}
