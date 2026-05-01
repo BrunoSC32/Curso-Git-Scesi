@@ -35,4 +35,28 @@ export async function create(req: Request, res: Response): Promise<void> {
   }
 }
 
+export async function update(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const { title, content, imageUrl } = req.body;
+
+  if (!title) {
+    res.status(400).json({ error: 'El título es requerido' });
+    return;
+  }
+
+  try {
+    const updatedNews = await updateNews(String(id), title, content, imageUrl);
+
+    if (!updatedNews) {
+      res.status(404).json({ error: 'Noticia no encontrada' });
+      return;
+    }
+
+    res.json(updatedNews);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar la noticia' });
+  }
+}
+
+
 
