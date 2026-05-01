@@ -14,3 +14,12 @@ export async function initializeNewsFile() {
     await fs.writeFile(NEWS_FILE, JSON.stringify([], null, 2));
   }
 }
+
+export async function getAllNews(): Promise<News[]> {
+  try {
+    const data = await fs.readFile(NEWS_FILE, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
