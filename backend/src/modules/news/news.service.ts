@@ -23,3 +23,9 @@ export async function getAllNews(): Promise<News[]> {
     return [];
   }
 }
+
+export async function getNewsById(id: string): Promise<News | null> {
+  const news = await getAllNews();
+  return news.find((n) => n.id === id) || null;
+}
+
