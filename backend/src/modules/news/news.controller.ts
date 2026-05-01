@@ -58,5 +58,22 @@ export async function update(req: Request, res: Response): Promise<void> {
   }
 }
 
+export async function remove(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+
+  try {
+    const deletedNews = await deleteNews(String(id));
+
+    if (!deletedNews) {
+      res.status(404).json({ error: 'Noticia no encontrada' });
+      return;
+    }
+
+    res.json({ message: 'Noticia eliminada correctamente', deletedNews });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar la noticia' });
+  }
+}
+
 
 
