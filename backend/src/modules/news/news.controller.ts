@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews } from './news.service';
+import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews, getPaginatedNews } from './news.service';
 
 export async function getAll(_req: Request, res: Response): Promise<void> {
   const news = await getAllNews();
@@ -13,6 +13,20 @@ export async function getFiltered(req: Request, res: Response): Promise<void> {
 
   const news = await getFilteredNews(title, author);
   res.json(news);
+}
+
+// GET /news/paginated?page=1&limit=5
+export async function getPaginated(req: Request, res: Response): Promise<void> {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 5;
+
+  if (page < 1 || limit < 1) {
+    res.status(400).json({ error: 'page y limit deben ser mayores a 0' });
+    return;
+  }
+
+  const result = await getPaginatedNews(page, limit);
+  res.json(result);
 }
 
 export async function getById(req: Request, res: Response): Promise<void> {
