@@ -45,6 +45,28 @@ export async function filterNewsByAuthor(author: string): Promise<News[]> {
   );
 }
 
+// Combined filter: supports title and/or author query params simultaneously
+export async function getFilteredNews(
+  title?: string,
+  author?: string,
+): Promise<News[]> {
+  let news = await getAllNews();
+
+  if (title) {
+    news = news.filter((n) =>
+      n.title.toLowerCase().includes(title.toLowerCase()),
+    );
+  }
+
+  if (author) {
+    news = news.filter((n) =>
+      n.author.toLowerCase().includes(author.toLowerCase()),
+    );
+  }
+
+  return news;
+}
+
 export async function createNews(
   title: string,
   content: string | undefined,
