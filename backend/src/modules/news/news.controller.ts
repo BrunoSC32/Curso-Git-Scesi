@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews, getPaginatedNews } from './news.service';
+import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews, getPaginatedNews, filterNewsByStatus } from './news.service';
+import { NewsStatus } from './news.types';
 
 export async function getAll(_req: Request, res: Response): Promise<void> {
   const news = await getAllNews();
@@ -29,6 +30,19 @@ export async function getPaginated(req: Request, res: Response): Promise<void> {
   res.json(result);
 }
 
+// GET /news/status/:status  (draft | published)
+export async function getByStatus(req: Request, res: Response): Promise<void> {
+  const { status } = req.params;
+
+  if (status !== 'draft' && status !== 'published') {
+    res.status(400).json({ error: 'Status inválido. Use "draft" o "published"' });
+    return;
+  }
+
+  const news = await filterNewsByStatus(status as NewsStatus);
+  res.json(news);
+}
+
 export async function getById(req: Request, res: Response): Promise<void> {
   const news = await getNewsById(String(req.params.id));
 
@@ -42,7 +56,7 @@ export async function getById(req: Request, res: Response): Promise<void> {
 
 export async function create(req: Request, res: Response): Promise<void> {
   try {
-    const { title, content, author, imageUrl } = req.body;
+    const { title, content, author, imageUrl, status } = req.body;
 
     if (!title || !author) {
       res.status(400).json({ error: 'El título y el autor son requeridos' });
@@ -50,8 +64,7 @@ export async function create(req: Request, res: Response): Promise<void> {
     }
 
     const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : imageUrl;
-
-    const newNews = await createNews(title, content, author, finalImageUrl);
+    const newNews = await createNews(title, content, author, finalImageUrl, status);
     res.status(201).json(newNews);
   } catch (error) {
     res.status(500).json({ error: 'Error al crear la noticia' });
@@ -60,7 +73,7 @@ export async function create(req: Request, res: Response): Promise<void> {
 
 export async function update(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
-  const { title, content, imageUrl } = req.body;
+  const { title, content, imageUrl, status } = req.body;
 
   if (!title) {
     res.status(400).json({ error: 'El título es requerido' });
@@ -69,8 +82,7 @@ export async function update(req: Request, res: Response): Promise<void> {
 
   try {
     const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : imageUrl;
-
-    const updatedNews = await updateNews(String(id), title, content, finalImageUrl);
+    const updatedNews = await updateNews(String(id), title, content, finalImageUrl, status);
 
     if (!updatedNews) {
       res.status(404).json({ error: 'Noticia no encontrada' });
