@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import NewsForm from '../components/NewsForm'
 import { createNews } from '../services/newsService'
 import type { NewsPayload } from '../types/news'
+import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 function CreateNewsPage() {
   const navigate = useNavigate()
@@ -16,8 +17,8 @@ function CreateNewsPage() {
     try {
       await createNews(payload)
       navigate('/', { state: { message: 'Noticia creada correctamente.' } })
-    } catch {
-      setFormError('No se pudo guardar la noticia. Intenta nuevamente.')
+    } catch (error) {
+      setFormError(getApiErrorMessage(error, 'No se pudo guardar la noticia. Intenta nuevamente.'))
     } finally {
       setIsSubmitting(false)
     }

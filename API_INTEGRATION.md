@@ -15,6 +15,21 @@ Excluded from this phase:
 - File upload flow from the frontend
 - Frontend support for `status`
 
+## Authentication Status
+
+The current `/login` screen in the frontend is a local UI shell only.
+
+Current behavior:
+- Stores a mock admin session in browser `localStorage`
+- Protects admin routes only at frontend routing level
+- Allows logout by clearing the local session
+
+Not included yet:
+- Calls to `POST /auth/login`
+- Backend credential validation
+- Tokens, cookies, or server-backed sessions
+- Authorization middleware for `/news` or other backend routes
+
 ## Base URL
 
 - Backend local URL: `http://localhost:3000`

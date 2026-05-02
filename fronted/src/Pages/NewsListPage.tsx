@@ -4,6 +4,7 @@ import EmptyState from '../components/EmptyState'
 import NewsCard from '../components/NewsCard'
 import { deleteNews, getNewsList } from '../services/newsService'
 import type { News } from '../types/news'
+import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 interface NavigationState {
   message?: string
@@ -14,9 +15,8 @@ function NewsListPage() {
   const [newsList, setNewsList] = useState<News[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [feedback, setFeedback] = useState<string | null>(
-    (location.state as NavigationState | null)?.message ?? null,
-  )
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const navigationFeedback = (location.state as NavigationState | null)?.message ?? null
 
   useEffect(() => {
     let isMounted = true
@@ -30,9 +30,9 @@ function NewsListPage() {
         if (isMounted) {
           setNewsList(news)
         }
-      } catch {
+      } catch (loadError) {
         if (isMounted) {
-          setError('No se pudo cargar la lista de noticias.')
+          setError(getApiErrorMessage(loadError, 'No se pudo cargar la lista de noticias.'))
         }
       } finally {
         if (isMounted) {
@@ -48,13 +48,6 @@ function NewsListPage() {
     }
   }, [])
 
-  useEffect(() => {
-    const nextFeedback = (location.state as NavigationState | null)?.message ?? null
-    if (nextFeedback) {
-      setFeedback(nextFeedback)
-    }
-  }, [location.state])
-
   async function handleDelete(id: string) {
     const confirmed = window.confirm('Esta accion eliminara la noticia. Deseas continuar?')
     if (!confirmed) {
@@ -65,9 +58,10 @@ function NewsListPage() {
       await deleteNews(id)
       const nextNewsList = await getNewsList()
       setNewsList(nextNewsList)
+      setError(null)
       setFeedback('Noticia eliminada correctamente.')
-    } catch {
-      setError('No se pudo eliminar la noticia.')
+    } catch (deleteError) {
+      setError(getApiErrorMessage(deleteError, 'No se pudo eliminar la noticia.'))
     }
   }
 
@@ -84,7 +78,9 @@ function NewsListPage() {
         </div>
       </div>
 
-      {feedback ? <p className="form-message success">{feedback}</p> : null}
+      {feedback ?? navigationFeedback ? (
+        <p className="form-message success">{feedback ?? navigationFeedback}</p>
+      ) : null}
       {error ? <p className="form-message error">{error}</p> : null}
 
       {isLoading ? <section className="panel">Cargando noticias...</section> : null}

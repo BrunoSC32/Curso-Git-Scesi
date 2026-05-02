@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import type { NewsPayload } from '../types/news'
 
 interface NewsFormProps {
@@ -33,10 +33,6 @@ function NewsForm({
 }: NewsFormProps) {
   const [values, setValues] = useState<NewsPayload>(initialValues ?? defaultValues)
   const [errors, setErrors] = useState<FormErrors>({})
-
-  useEffect(() => {
-    setValues(initialValues ?? defaultValues)
-  }, [initialValues])
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = event.target
