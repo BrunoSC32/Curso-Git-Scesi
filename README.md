@@ -34,7 +34,7 @@ Sistema de administración y publicación de noticias. Permite a un administrado
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
 
-- **Framework:** React 19
+- **Library:** React 19
 - **Lenguaje:** TypeScript
 - **Bundler:** Vite
 - **Routing:** React Router DOM 7
@@ -60,8 +60,8 @@ Curso-Git-Scesi/
 ├── fronted/
 │   └── src/
 │       ├── components/
-│       ├── Pages/
-│       ├── Services/
+│       ├── pages/
+│       ├── services/
 │       └── types/
 ├── API_INTEGRATION.md        # Guía de integración frontend ↔ backend
 └── README.md
