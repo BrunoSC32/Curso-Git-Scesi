@@ -37,6 +37,14 @@ export async function searchNewsByTitle(title: string): Promise<News[]> {
   );
 }
 
+// Filter news by author (case-insensitive partial match)
+export async function filterNewsByAuthor(author: string): Promise<News[]> {
+  const news = await getAllNews();
+  return news.filter((n) =>
+    n.author.toLowerCase().includes(author.toLowerCase()),
+  );
+}
+
 export async function createNews(
   title: string,
   content: string | undefined,
