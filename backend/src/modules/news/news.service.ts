@@ -15,10 +15,17 @@ export async function initializeNewsFile() {
   }
 }
 
+function sortNewsByUpdatedAt(news: News[]): News[] {
+  return [...news].sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+  );
+}
+
 export async function getAllNews(): Promise<News[]> {
   try {
     const data = await fs.readFile(NEWS_FILE, 'utf-8');
-    return JSON.parse(data);
+    const news = JSON.parse(data) as News[];
+    return sortNewsByUpdatedAt(news);
   } catch {
     return [];
   }
@@ -149,6 +156,7 @@ export async function updateNews(
   id: string,
   title: string,
   content: string | undefined,
+  author: string,
   imageUrl?: string | null,
   status?: NewsStatus,
 ): Promise<News | null> {
@@ -161,6 +169,7 @@ export async function updateNews(
     ...news[index],
     title,
     content,
+    author,
     ...(status && { status }),
     updatedAt: new Date().toISOString(),
   };

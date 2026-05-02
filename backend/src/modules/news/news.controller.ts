@@ -1,11 +1,15 @@
 import { Request, Response } from 'express';
-import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews, getPaginatedNews, filterNewsByStatus, getNewsStats } from './news.service';
+import {
+  createNews,
+  deleteNews,
+  filterNewsByStatus,
+  getFilteredNews,
+  getNewsById,
+  getNewsStats,
+  getPaginatedNews,
+  updateNews,
+} from './news.service';
 import { NewsStatus } from './news.types';
-
-export async function getAll(_req: Request, res: Response): Promise<void> {
-  const news = await getAllNews();
-  res.json(news);
-}
 
 // GET /news?title=xxx&author=yyy
 export async function getFiltered(req: Request, res: Response): Promise<void> {
@@ -18,8 +22,8 @@ export async function getFiltered(req: Request, res: Response): Promise<void> {
 
 // GET /news/paginated?page=1&limit=5
 export async function getPaginated(req: Request, res: Response): Promise<void> {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 5;
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = parseInt(req.query.limit as string, 10) || 5;
 
   if (page < 1 || limit < 1) {
     res.status(400).json({ error: 'page y limit deben ser mayores a 0' });
@@ -35,7 +39,7 @@ export async function getByStatus(req: Request, res: Response): Promise<void> {
   const { status } = req.params;
 
   if (status !== 'draft' && status !== 'published') {
-    res.status(400).json({ error: 'Status inválido. Use "draft" o "published"' });
+    res.status(400).json({ error: 'Status invalido. Use "draft" o "published"' });
     return;
   }
 
@@ -65,30 +69,37 @@ export async function create(req: Request, res: Response): Promise<void> {
     const { title, content, author, imageUrl, status } = req.body;
 
     if (!title || !author) {
-      res.status(400).json({ error: 'El título y el autor son requeridos' });
+      res.status(400).json({ error: 'El titulo y el autor son requeridos' });
       return;
     }
 
     const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : imageUrl;
     const newNews = await createNews(title, content, author, finalImageUrl, status);
     res.status(201).json(newNews);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Error al crear la noticia' });
   }
 }
 
 export async function update(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
-  const { title, content, imageUrl, status } = req.body;
+  const { title, content, author, imageUrl, status } = req.body;
 
-  if (!title) {
-    res.status(400).json({ error: 'El título es requerido' });
+  if (!title || !author) {
+    res.status(400).json({ error: 'El titulo y el autor son requeridos' });
     return;
   }
 
   try {
     const finalImageUrl = req.file ? `/uploads/${req.file.filename}` : imageUrl;
-    const updatedNews = await updateNews(String(id), title, content, finalImageUrl, status);
+    const updatedNews = await updateNews(
+      String(id),
+      title,
+      content,
+      author,
+      finalImageUrl,
+      status,
+    );
 
     if (!updatedNews) {
       res.status(404).json({ error: 'Noticia no encontrada' });
@@ -96,7 +107,7 @@ export async function update(req: Request, res: Response): Promise<void> {
     }
 
     res.json(updatedNews);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Error al actualizar la noticia' });
   }
 }
@@ -113,7 +124,7 @@ export async function remove(req: Request, res: Response): Promise<void> {
     }
 
     res.json({ message: 'Noticia eliminada correctamente', deletedNews });
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Error al eliminar la noticia' });
   }
 }
