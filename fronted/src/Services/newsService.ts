@@ -1,103 +1,76 @@
-import { seedNews } from '../data/seedNews'
 import type { News, NewsPayload } from '../types/news'
+import { httpRequest } from './http'
 
-const STORAGE_KEY = 'news-admin-spa'
-
-function cloneNewsList(newsList: News[]) {
-  return newsList.map((item) => ({ ...item }))
+interface BackendNews {
+  id: string
+  title: string
+  content?: string
+  author: string
+  imageUrl?: string
+  createdAt: string
+  updatedAt: string
+  status?: string
 }
 
-function getStoredNews(): News[] {
-  if (typeof window === 'undefined') {
-    return cloneNewsList(seedNews)
-  }
-
-  const raw = window.localStorage.getItem(STORAGE_KEY)
-  if (!raw) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seedNews))
-    return cloneNewsList(seedNews)
-  }
-
-  try {
-    const parsed = JSON.parse(raw) as News[]
-    if (!Array.isArray(parsed)) {
-      throw new Error('Invalid news payload')
-    }
-    return parsed
-  } catch {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seedNews))
-    return cloneNewsList(seedNews)
-  }
-}
-
-function saveStoredNews(newsList: News[]) {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newsList))
-}
-
-function sortByDate(newsList: News[]) {
-  return [...newsList].sort(
-    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-  )
-}
-
-function buildNewsRecord(payload: NewsPayload): News {
-  const now = new Date().toISOString()
-
+function normalizePayload(payload: NewsPayload) {
   return {
-    id: crypto.randomUUID(),
     title: payload.title.trim(),
     content: payload.content.trim(),
     author: payload.author.trim(),
-    imageUrl: payload.imageUrl?.trim() || undefined,
-    createdAt: now,
-    updatedAt: now,
+    imageUrl: payload.imageUrl?.trim() ? payload.imageUrl.trim() : undefined,
+  }
+}
+
+function mapNews(news: BackendNews): News {
+  return {
+    id: news.id,
+    title: news.title,
+    content: news.content,
+    author: news.author,
+    imageUrl: news.imageUrl,
+    createdAt: news.createdAt,
+    updatedAt: news.updatedAt,
   }
 }
 
 export async function getNewsList(): Promise<News[]> {
-  return sortByDate(getStoredNews())
+  const newsList = await httpRequest<BackendNews[]>('/news')
+  return newsList.map(mapNews)
 }
 
 export async function getNewsById(id: string): Promise<News | null> {
-  const newsList = getStoredNews()
-  return newsList.find((item) => item.id === id) ?? null
+  try {
+    const news = await httpRequest<BackendNews>(`/news/${id}`)
+    return mapNews(news)
+  } catch (error) {
+    if (error instanceof Error && 'status' in error && error.status === 404) {
+      return null
+    }
+
+    throw error
+  }
 }
 
 export async function createNews(payload: NewsPayload): Promise<News> {
-  const newsList = getStoredNews()
-  const nextNews = buildNewsRecord(payload)
-  const updated = sortByDate([nextNews, ...newsList])
-  saveStoredNews(updated)
-  return nextNews
+  const news = await httpRequest<BackendNews>('/news', {
+    method: 'POST',
+    body: normalizePayload(payload),
+  })
+
+  return mapNews(news)
 }
 
 export async function updateNews(id: string, payload: NewsPayload): Promise<News> {
-  const newsList = getStoredNews()
-  const existing = newsList.find((item) => item.id === id)
+  const news = await httpRequest<BackendNews>(`/news/${id}`, {
+    method: 'PATCH',
+    body: normalizePayload(payload),
+  })
 
-  if (!existing) {
-    throw new Error('La noticia no existe.')
-  }
-
-  const updatedNews: News = {
-    ...existing,
-    title: payload.title.trim(),
-    content: payload.content.trim(),
-    author: payload.author.trim(),
-    imageUrl: payload.imageUrl?.trim() || undefined,
-    updatedAt: new Date().toISOString(),
-  }
-
-  const updatedList = sortByDate(
-    newsList.map((item) => (item.id === id ? updatedNews : item)),
-  )
-
-  saveStoredNews(updatedList)
-  return updatedNews
+  return mapNews(news)
 }
 
 export async function deleteNews(id: string): Promise<void> {
-  const newsList = getStoredNews()
-  const filtered = newsList.filter((item) => item.id !== id)
-  saveStoredNews(filtered)
+  await httpRequest<{ message: string }>(`/news/${id}`, {
+    method: 'DELETE',
+  })
 }
