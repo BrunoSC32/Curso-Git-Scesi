@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { News, PaginatedResult } from './news.types';
+import { News, NewsStatus, PaginatedResult } from './news.types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const NEWS_FILE = path.join(DATA_DIR, 'news.json');
@@ -67,6 +67,12 @@ export async function getFilteredNews(
   return news;
 }
 
+// Filter news by status: draft or published
+export async function filterNewsByStatus(status: NewsStatus): Promise<News[]> {
+  const news = await getAllNews();
+  return news.filter((n) => n.status === status);
+}
+
 // Paginate news: returns a page of results with metadata
 export async function getPaginatedNews(
   page: number = 1,
@@ -93,6 +99,7 @@ export async function createNews(
   content: string | undefined,
   author: string,
   imageUrl?: string,
+  status: NewsStatus = 'draft',
 ): Promise<News> {
   const news = await getAllNews();
   const newNews: News = {
@@ -100,6 +107,7 @@ export async function createNews(
     title,
     content,
     author,
+    status,
     ...(imageUrl && { imageUrl }),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -114,6 +122,7 @@ export async function updateNews(
   title: string,
   content: string | undefined,
   imageUrl?: string | null,
+  status?: NewsStatus,
 ): Promise<News | null> {
   const news = await getAllNews();
   const index = news.findIndex((n) => n.id === id);
@@ -124,6 +133,7 @@ export async function updateNews(
     ...news[index],
     title,
     content,
+    ...(status && { status }),
     updatedAt: new Date().toISOString(),
   };
 
