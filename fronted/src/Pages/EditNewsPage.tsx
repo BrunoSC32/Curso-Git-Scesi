@@ -4,6 +4,7 @@ import EmptyState from '../components/EmptyState'
 import NewsForm from '../components/NewsForm'
 import { getNewsById, updateNews } from '../services/newsService'
 import type { News, NewsPayload } from '../types/news'
+import { getApiErrorMessage } from '../utils/getApiErrorMessage'
 
 function EditNewsPage() {
   const { id = '' } = useParams()
@@ -20,6 +21,7 @@ function EditNewsPage() {
     async function loadNews() {
       setIsLoading(true)
       setLoadError(null)
+      setNews(null)
 
       try {
         const result = await getNewsById(id)
@@ -28,9 +30,9 @@ function EditNewsPage() {
         }
 
         setNews(result)
-      } catch {
+      } catch (error) {
         if (isMounted) {
-          setLoadError('No se pudo cargar la noticia.')
+          setLoadError(getApiErrorMessage(error, 'No se pudo cargar la noticia.'))
         }
       } finally {
         if (isMounted) {
@@ -53,8 +55,8 @@ function EditNewsPage() {
     try {
       await updateNews(id, payload)
       navigate('/', { state: { message: 'Noticia actualizada correctamente.' } })
-    } catch {
-      setFormError('No se pudo actualizar la noticia.')
+    } catch (error) {
+      setFormError(getApiErrorMessage(error, 'No se pudo actualizar la noticia.'))
     } finally {
       setIsSubmitting(false)
     }
@@ -88,6 +90,7 @@ function EditNewsPage() {
       </div>
 
       <NewsForm
+        key={news.id}
         initialValues={{
           title: news.title,
           content: news.content ?? '',
