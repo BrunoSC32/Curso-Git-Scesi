@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { News } from './news.types';
+import { News, PaginatedResult } from './news.types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const NEWS_FILE = path.join(DATA_DIR, 'news.json');
@@ -65,6 +65,27 @@ export async function getFilteredNews(
   }
 
   return news;
+}
+
+// Paginate news: returns a page of results with metadata
+export async function getPaginatedNews(
+  page: number = 1,
+  limit: number = 5,
+): Promise<PaginatedResult<News>> {
+  const all = await getAllNews();
+  const total = all.length;
+  const totalPages = Math.ceil(total / limit);
+  const safePage = Math.max(1, Math.min(page, totalPages || 1));
+  const start = (safePage - 1) * limit;
+  const data = all.slice(start, start + limit);
+
+  return {
+    data,
+    total,
+    page: safePage,
+    limit,
+    totalPages,
+  };
 }
 
 export async function createNews(
