@@ -1,0 +1,36 @@
+[
+  {
+    "id": "4ded8ba6-4605-4538-add2-a0d6860519af",
+    "title": "Últimas noticias de tecnología",
+    "content": "Se ha lanzado una nueva versión de Node.js con mejoras de rendimiento...",
+    "author": "Juan Pérez",
+    "createdAt": "2026-05-01T21:37:07.902Z",
+    "updatedAt": "2026-05-01T21:37:07.902Z"
+  },
+  {
+    "id": "e5782d11-9a18-4983-a4eb-64f00fac3351",
+    "title": "Últimas noticias de informatica",
+    "content": "Se ha lanzado una nueva versión de Node.js con mejoras de rendimiento...",
+    "author": "Juan Pérez",
+    "createdAt": "2026-05-01T21:37:38.932Z",
+    "updatedAt": "2026-05-01T21:37:38.933Z"
+  },
+  {
+    "id": "d92ccad2-b99c-4219-a832-66f7db231907",
+    "title": "Últimas noticias de informatica",
+    "content": "Se ha lanzado una nueva versión de Node.js con mejoras de rendimiento...",
+    "author": "Juan Pérez",
+    "imageUrl": "https://holasim.com/wp-content/uploads/2025/09/como-conseguir-vuelos-baratos.jpg",
+    "createdAt": "2026-05-01T21:41:31.224Z",
+    "updatedAt": "2026-05-01T21:41:31.224Z"
+  },
+  {
+    "id": "109d6bff-3584-4f57-8f5b-bd0bf2bab6b9",
+    "title": "Últimas noticias de informatica",
+    "content": "Se ha lanzado una nueva versión de Node.js con mejoras de rendimiento...",
+    "author": "Juan Pérez",
+    "imageUrl": "https://holasim.com/wp-content/uploads/2025/09/como-conseguir-vuelos-baratos.jpg",
+    "createdAt": "2026-05-01T21:49:24.507Z",
+    "updatedAt": "2026-05-01T21:49:24.508Z"
+  }
+]
