@@ -17,6 +17,7 @@ Sistema de administracion de noticias con:
 - CRUD administrativo de noticias
 
 En esta fase, el frontend administrativo ya consume la API real del backend para listar, crear, editar y eliminar noticias.
+El acceso al panel usa una sesion local simulada en el navegador y no autentica contra el backend todavia.
 
 ## Estructura
 
@@ -88,12 +89,23 @@ Incluido:
 - CRUD admin de noticias contra la API real
 - `imageUrl` por JSON
 - errores API con payload `{ "error": "..." }`
+- login visual con sesion local persistida en `localStorage`
 
 Pendiente para fases siguientes:
 - auth real de extremo a extremo
 - proteccion real de endpoints
 - upload de archivos desde el frontend
 - manejo de `status` en la interfaz admin
+
+## Estado de autenticacion
+
+La pantalla `/login` implementada en el frontend es una maqueta local:
+- no consume `POST /auth/login`
+- no valida credenciales contra el backend
+- no genera token, cookie ni sesion de servidor
+- no protege endpoints del backend
+
+Su objetivo actual es solo modelar el flujo de acceso del panel y la proteccion visual de rutas.
 
 ## GitFlow
 
