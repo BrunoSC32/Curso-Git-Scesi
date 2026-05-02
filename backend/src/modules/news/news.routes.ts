@@ -1,22 +1,25 @@
 import { Router } from 'express';
-import { getAll, getById, create, update, remove } from './news.controller';
+import { getFiltered, getById, create, update, remove } from './news.controller';
 import { upload } from '../shared/upload';
 
 const router = Router();
 
-//  Obtener todas las noticias
-router.get('/', getAll);
+// GET /news          → returns all news
+// GET /news?title=xx → search by title
+// GET /news?author=xx → filter by author
+// GET /news?title=xx&author=xx → combined filter
+router.get('/', getFiltered);
 
-// Obtener una noticia por ID
+// Get a single news item by ID
 router.get('/:id', getById);
 
-// Crear una nueva noticia
+// Create a news item (supports image upload)
 router.post('/', upload.single('image'), create);
 
-//  Actualizar una noticia
+// Update a news item (supports image upload)
 router.patch('/:id', upload.single('image'), update);
 
-//  Eliminar una noticia
+// Delete a news item
 router.delete('/:id', remove);
 
 export default router;
