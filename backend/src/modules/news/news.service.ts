@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { News, NewsStatus, PaginatedResult } from './news.types';
+import { News, NewsStats, NewsStatus, PaginatedResult } from './news.types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const NEWS_FILE = path.join(DATA_DIR, 'news.json');
@@ -91,6 +91,34 @@ export async function getPaginatedNews(
     page: safePage,
     limit,
     totalPages,
+  };
+}
+
+// Returns summary statistics of all news
+export async function getNewsStats(): Promise<NewsStats> {
+  const news = await getAllNews();
+
+  const total = news.length;
+  const published = news.filter((n) => n.status === 'published').length;
+  const draft = news.filter((n) => n.status === 'draft').length;
+
+  const authorCount: Record<string, number> = {};
+  for (const n of news) {
+    authorCount[n.author] = (authorCount[n.author] || 0) + 1;
+  }
+
+  const latest = news.length
+    ? news.reduce((a, b) =>
+        new Date(a.createdAt) > new Date(b.createdAt) ? a : b,
+      )
+    : null;
+
+  return {
+    total,
+    published,
+    draft,
+    authorCount,
+    latestNewsTitle: latest ? latest.title : null,
   };
 }
 

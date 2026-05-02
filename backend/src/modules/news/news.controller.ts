@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews, getPaginatedNews, filterNewsByStatus } from './news.service';
+import { getAllNews, getNewsById, createNews, updateNews, deleteNews, getFilteredNews, getPaginatedNews, filterNewsByStatus, getNewsStats } from './news.service';
 import { NewsStatus } from './news.types';
 
 export async function getAll(_req: Request, res: Response): Promise<void> {
@@ -41,6 +41,12 @@ export async function getByStatus(req: Request, res: Response): Promise<void> {
 
   const news = await filterNewsByStatus(status as NewsStatus);
   res.json(news);
+}
+
+// GET /news/stats
+export async function getStats(_req: Request, res: Response): Promise<void> {
+  const stats = await getNewsStats();
+  res.json(stats);
 }
 
 export async function getById(req: Request, res: Response): Promise<void> {

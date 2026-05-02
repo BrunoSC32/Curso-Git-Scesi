@@ -1,32 +1,32 @@
 import { Router } from 'express';
-import { getFiltered, getPaginated, getByStatus, getById, create, update, remove } from './news.controller';
+import { getFiltered, getPaginated, getByStatus, getStats, getById, create, update, remove } from './news.controller';
 import { upload } from '../shared/upload';
 
 const router = Router();
 
 // GET /news                        → all news (supports ?title=&author= filters)
-// GET /news?title=xx               → search by title
-// GET /news?author=xx              → filter by author
-// GET /news?title=xx&author=xx     → combined filter
 router.get('/', getFiltered);
 
-// GET /news/paginated?page=1&limit=5 → paginated results
+// GET /news/stats                  → summary statistics
+router.get('/stats', getStats);
+
+// GET /news/paginated?page=1&limit=5
 router.get('/paginated', getPaginated);
 
 // GET /news/status/draft           → only draft news
 // GET /news/status/published       → only published news
 router.get('/status/:status', getByStatus);
 
-// GET /news/:id                    → single news item
+// GET /news/:id
 router.get('/:id', getById);
 
-// POST /news                       → create (supports image upload)
+// POST /news
 router.post('/', upload.single('image'), create);
 
-// PATCH /news/:id                  → update (supports image upload)
+// PATCH /news/:id
 router.patch('/:id', upload.single('image'), update);
 
-// DELETE /news/:id                 → delete
+// DELETE /news/:id
 router.delete('/:id', remove);
 
 export default router;

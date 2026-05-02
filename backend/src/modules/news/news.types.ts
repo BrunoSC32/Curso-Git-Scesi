@@ -18,3 +18,11 @@ export interface PaginatedResult<T> {
   limit: number;
   totalPages: number;
 }
+
+export interface NewsStats {
+  total: number;
+  published: number;
+  draft: number;
+  authorCount: Record<string, number>;
+  latestNewsTitle: string | null;
+}
