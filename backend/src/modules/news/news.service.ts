@@ -29,6 +29,14 @@ export async function getNewsById(id: string): Promise<News | null> {
   return news.find((n) => n.id === id) || null;
 }
 
+// Search news by title (case-insensitive partial match)
+export async function searchNewsByTitle(title: string): Promise<News[]> {
+  const news = await getAllNews();
+  return news.filter((n) =>
+    n.title.toLowerCase().includes(title.toLowerCase()),
+  );
+}
+
 export async function createNews(
   title: string,
   content: string | undefined,
