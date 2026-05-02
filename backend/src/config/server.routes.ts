@@ -1,9 +1,13 @@
 import { Request, Response, Router } from 'express';
 import newsRoutes from '../modules/news/news.routes';
+import authRoutes from '../modules/auth/auth.routes';
 
 const router = Router();
 
-// Rutas de noticias
+// Auth routes
+router.use('/auth', authRoutes);
+
+// News routes
 router.use('/news', newsRoutes);
 
 router.use(/.*/,(req: Request, res: Response) => {
