@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getFiltered, getById, create, update, remove } from './news.controller';
+import { getFiltered, getPaginated, getById, create, update, remove } from './news.controller';
 import { upload } from '../shared/upload';
 
 const router = Router();
@@ -9,6 +9,9 @@ const router = Router();
 // GET /news?author=xx → filter by author
 // GET /news?title=xx&author=xx → combined filter
 router.get('/', getFiltered);
+
+// GET /news/paginated?page=1&limit=5 → paginated results
+router.get('/paginated', getPaginated);
 
 // Get a single news item by ID
 router.get('/:id', getById);
