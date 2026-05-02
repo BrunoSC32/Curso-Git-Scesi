@@ -1,71 +1,79 @@
-# Curso Git - SCESI
+# Curso Git — SCESI
+Repositorio del grupo para el curso de Git & GitHub de la SCESI.
 
-Repositorio del grupo para el curso de Git y GitHub de la SCESI.
-
-## Integrantes
-
-- Bruno Salcedo Cadiz
-- Jouse Suarez Zabala
-- Leyton Cespedes Valencia
-- Orlando Altamirano Vargas
-
-## Proyecto
-
-Sistema de administracion de noticias con:
-- backend en Express + TypeScript# Curso Git - SCESI
-
-Repositorio del grupo para el curso de Git y GitHub de la SCESI.
-
-## Integrantes
+**Integrantes:**
 
 - Bruno Salcedo Cadiz
 - Jouse Suarez Zabala
 - Leyton Cespedes Valencia
 - Orlando Altamirano Vargas
 
-## Proyecto
+---
 
-Sistema de administracion de noticias con:
-- backend en Express + TypeScript
-- frontend en React + Vite
-- CRUD administrativo de noticias
+## Descripción del proyecto
 
-En esta fase, el frontend administrativo ya consume la API real del backend para listar, crear, editar y eliminar noticias.
-El acceso al panel usa una sesion local simulada en el navegador y no autentica contra el backend todavia.
+Sistema de administración y publicación de noticias. Permite a un administrador crear, editar, eliminar y publicar noticias a través de un panel web. Los usuarios sin cuenta pueden ver las noticias publicadas en la vista pública.
 
-## Estructura
+---
 
-```text
+## Tecnologías
+
+### Backend
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+
+- **Runtime:** Node.js
+- **Framework:** Express 5
+- **Lenguaje:** TypeScript
+- **Almacenamiento:** Archivos JSON (`data/news.json`, `data/users.json`)
+- **Upload de imágenes:** Multer
+
+### Frontend
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+
+- **Library:** React 19
+- **Lenguaje:** TypeScript
+- **Bundler:** Vite
+- **Routing:** React Router DOM 7
+
+---
+
+## Estructura del proyecto
+
+```
 Curso-Git-Scesi/
-|-- backend/
-|   |-- data/
-|   |-- src/
-|   `-- package.json
-|-- fronted/
-|   |-- src/
-|   |-- .env.example
-|   `-- package.json
-|-- API_INTEGRATION.md
-`-- README.md
+├── backend/
+│   ├── data/
+│   │   ├── news.json         # Almacenamiento de noticias
+│   │   └── users.json        # Almacenamiento de usuarios
+│   └── src/
+│       ├── config/
+│       │   ├── server.config.ts
+│       │   └── server.routes.ts
+│       └── modules/
+│           ├── auth/         # Login y registro
+│           ├── news/         # CRUD de noticias
+│           └── shared/       # Upload, error handler
+├── fronted/
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       ├── services/
+│       └── types/
+├── API_INTEGRATION.md        # Guía de integración frontend ↔ backend
+└── README.md
 ```
 
-## Requisitos
+---
 
-- Node.js 18 o superior
-- npm
+## Cómo correr el proyecto
 
-## Inicio rapido
+### Backend
 
-Si quieres levantar todo lo necesario de la forma mas corta:
-
-1. Abrir una terminal para el backend
-2. Abrir una segunda terminal para el frontend
-3. Levantar primero el backend
-4. Levantar despues el frontend
-5. Entrar a `http://localhost:5173`
-6. Iniciar sesion con cualquier correo y cualquier contrasena no vacios
-
-## Backend
+Requisitos: **Node.js 18+**
 
 ```bash
 cd backend
@@ -73,250 +81,57 @@ npm install
 npm run start:dev
 ```
 
-Servidor local:
-- `http://localhost:3000`
+El servidor queda corriendo en: `http://localhost:3000`
 
-Archivos que usa el backend en local:
-- `backend/data/news.json` para noticias
-- `backend/data/users.json` para usuarios
-- `backend/uploads/` para archivos subidos por el backend
-
-## Frontend
-
-Definir la URL base de la API:
+### Frontend
 
 ```bash
 cd fronted
-echo VITE_API_URL=http://localhost:3000 > .env
-```
-
-Instalar dependencias y levantar Vite:
-
-```bash
 npm install
 npm run dev
 ```
 
-Aplicacion local:
-- `http://localhost:5173`
+La app queda corriendo en: `http://localhost:5173`
 
-Archivo de entorno esperado:
-- `fronted/.env`
+> Asegúrate de levantar el backend **antes** que el frontend para que las llamadas a la API funcionen.
 
-Valor minimo requerido:
+---
 
-```env
-VITE_API_URL=http://localhost:3000
-```
+## Endpoints principales del backend
 
-## Flujo local recomendado
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/auth/register` | Registrar usuario |
+| POST | `/auth/login` | Iniciar sesión |
+| GET | `/news` | Listar noticias (soporta `?title=` y `?author=`) |
+| GET | `/news/status/:status` | Filtrar por `draft` o `published` |
+| GET | `/news/paginated` | Noticias paginadas (`?page=1&limit=5`) |
+| GET | `/news/stats` | Estadísticas del sistema |
+| GET | `/news/:id` | Obtener noticia por ID |
+| POST | `/news` | Crear noticia |
+| PATCH | `/news/:id` | Actualizar noticia |
+| DELETE | `/news/:id` | Eliminar noticia |
 
-1. Levantar primero el backend en `http://localhost:3000`
-2. Levantar despues el frontend en `http://localhost:5173`
-3. Abrir el panel de noticias
-4. El sistema te redirigira a `/login`
-5. Ingresar cualquier correo y cualquier contrasena no vacios
-6. Verificar listado, creacion, edicion y eliminacion
+Para el detalle completo de cada endpoint, cuerpos de request y respuestas ver [`API_INTEGRATION.md`](./API_INTEGRATION.md).
 
-## Prueba manual recomendada
+---
 
-Una vez dentro del panel:
+## Roles de usuario
 
-1. Crear una noticia nueva
-2. Confirmar que aparece en el listado
-3. Editar titulo, contenido, autor o imagen
-4. Confirmar que los cambios persisten al recargar
-5. Eliminar la noticia
-6. Confirmar que desaparece del listado
+| Rol | Acceso |
+|-----|--------|
+| `user` (sin login) | Solo noticias publicadas (`status: published`) |
+| `admin` | Panel completo: crear, editar, eliminar, ver borradores |
 
-## Endpoints principales
+---
 
-Backend expone, entre otros, estos endpoints:
+## Flujo de trabajo Git
 
-- `GET /news`
-- `GET /news/:id`
-- `POST /news`
-- `PATCH /news/:id`
-- `DELETE /news/:id`
-- `POST /auth/login`
-- `POST /auth/register`
+Este proyecto sigue **Gitflow**:
 
-Nota:
-- el frontend actual usa la API real de `news`
-- la pantalla `/login` todavia no consume `POST /auth/login`
+- `main` — código estable
+- `develop` — integración de cambios
+- `feature/*` — nuevas funcionalidades
+- `hotfix/*` — correcciones urgentes
 
-## Contrato de integracion
-
-La referencia de integracion frontend-backend para esta fase esta en:
-
-- [API_INTEGRATION.md](./API_INTEGRATION.md)
-
-## Alcance actual
-
-Incluido:
-- CRUD admin de noticias contra la API real
-- `imageUrl` por JSON
-- errores API con payload `{ "error": "..." }`
-- login visual con sesion local persistida en `localStorage`
-
-Pendiente para fases siguientes:
-- auth real de extremo a extremo
-- proteccion real de endpoints
-- upload de archivos desde el frontend
-- manejo de `status` en la interfaz admin
-
-## Estado de autenticacion
-
-La pantalla `/login` implementada en el frontend es una maqueta local:
-- no consume `POST /auth/login`
-- no valida credenciales contra el backend
-- no genera token, cookie ni sesion de servidor
-- no protege endpoints del backend
-
-Su objetivo actual es solo modelar el flujo de acceso del panel y la proteccion visual de rutas.
-
-## Troubleshooting
-
-### El frontend no carga noticias
-
-Revisar:
-- que el backend siga levantado en `http://localhost:3000`
-- que `fronted/.env` tenga `VITE_API_URL=http://localhost:3000`
-- que no haya errores de CORS o de red en la consola del navegador
-
-### El frontend abre pero vuelve a `/login`
-
-Revisar:
-- que hayas escrito correo y contrasena no vacios
-- que el navegador permita `localStorage`
-- que no hayas limpiado la sesion local al recargar o cerrar sesion
-
-### El backend no arranca
-
-Revisar:
-- que ejecutaste `npm install` dentro de `backend`
-- que el puerto `3000` no este siendo usado por otro proceso
-- que tu version de Node.js sea `18+`
-
-### El frontend no arranca
-
-Revisar:
-- que ejecutaste `npm install` dentro de `fronted`
-- que el puerto `5173` no este siendo usado por otro proceso
-- que el archivo `.env` exista dentro de `fronted`
-
-## GitFlow
-
-Ramas usadas en el proyecto:
-- `main` para codigo estable
-- `develop` para integracion
-- `feature/*` para nuevas funcionalidades
-- `hotfix/*` para correcciones urgentes
-
-Convencion de commits:
-- Conventional Commits
-
-- frontend en React + Vite
-- CRUD administrativo de noticias
-
-En esta fase, el frontend administrativo ya consume la API real del backend para listar, crear, editar y eliminar noticias.
-El acceso al panel usa una sesion local simulada en el navegador y no autentica contra el backend todavia.
-
-## Estructura
-
-```text
-Curso-Git-Scesi/
-|-- backend/
-|   |-- data/
-|   |-- src/
-|   `-- package.json
-|-- fronted/
-|   |-- src/
-|   |-- .env.example
-|   `-- package.json
-|-- API_INTEGRATION.md
-`-- README.md
-```
-
-## Requisitos
-
-- Node.js 18 o superior
-- npm
-
-## Backend
-
-```bash
-cd backend
-npm install
-npm run start:dev
-```
-
-Servidor local:
-- `http://localhost:3000`
-
-## Frontend
-
-Definir la URL base de la API:
-
-```bash
-cd fronted
-echo VITE_API_URL=http://localhost:3000 > .env
-```
-
-Instalar dependencias y levantar Vite:
-
-```bash
-npm install
-npm run dev
-```
-
-Aplicacion local:
-- `http://localhost:5173`
-
-## Flujo local recomendado
-
-1. Levantar primero el backend en `http://localhost:3000`
-2. Levantar despues el frontend en `http://localhost:5173`
-3. Abrir el panel de noticias
-4. Verificar listado, creacion, edicion y eliminacion
-
-## Contrato de integracion
-
-La referencia de integracion frontend-backend para esta fase esta en:
-
-- [API_INTEGRATION.md](./API_INTEGRATION.md)
-
-## Alcance actual
-
-Incluido:
-- CRUD admin de noticias contra la API real
-- `imageUrl` por JSON
-- errores API con payload `{ "error": "..." }`
-- login visual con sesion local persistida en `localStorage`
-
-Pendiente para fases siguientes:
-- auth real de extremo a extremo
-- proteccion real de endpoints
-- upload de archivos desde el frontend
-- manejo de `status` en la interfaz admin
-
-## Estado de autenticacion
-
-La pantalla `/login` implementada en el frontend es una maqueta local:
-- no consume `POST /auth/login`
-- no valida credenciales contra el backend
-- no genera token, cookie ni sesion de servidor
-- no protege endpoints del backend
-
-Su objetivo actual es solo modelar el flujo de acceso del panel y la proteccion visual de rutas.
-
-## GitFlow
-
-Ramas usadas en el proyecto:
-- `main` para codigo estable
-- `develop` para integracion
-- `feature/*` para nuevas funcionalidades
-- `hotfix/*` para correcciones urgentes
-
-Convencion de commits:
-- Conventional Commits
+Convención de commits: [Conventional Commits](https://www.conventionalcommits.org/)
